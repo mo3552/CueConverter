@@ -54,13 +54,13 @@ def parse_cue_file(cue_path):
         return []
     
     tracks = []
-    discnumber = "01"
+    discnumber = "1"
     current_track = None
     
     for line in lines:
         line = line.strip()
         if line.upper().startswith('REM DISCNUMBER'):
-            discnumber = line.split()[-1].zfill(2)
+            discnumber = line.split()[-1]
         elif line.upper().startswith('TRACK'):
             if current_track:
                 tracks.append(current_track)
