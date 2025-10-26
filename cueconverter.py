@@ -44,6 +44,17 @@ def get_quality():
             return qual
         print("유효하지 않은 음질입니다. 다음 중 선택하세요:", ', '.join(qualities))
 
+def get_output_dir():
+    """Prompt user for output directory."""
+    while True:
+        output_dir = input("출력 폴더명을 입력하세요 (기본값: output): ").strip()
+        if not output_dir:
+            output_dir = "output"
+        # Check if it's a valid directory name
+        if output_dir and not any(c in output_dir for c in ['<', '>', ':', '"', '|', '?', '*']):
+            return output_dir
+        print("유효하지 않은 폴더명입니다. 다시 입력하세요.")
+
 def parse_cue_file(cue_path):
     """Parse cue file to extract track information."""
     try:
@@ -90,9 +101,9 @@ def parse_cue_file(cue_path):
     
     return tracks
 
-def convert_tracks(cue_path, output_format, quality, tracks):
+def convert_tracks(cue_path, output_format, quality, tracks, output_dir_name):
     """Convert tracks using FFmpeg."""
-    output_dir = Path.cwd() / "output"
+    output_dir = Path.cwd() / output_dir_name
     output_dir.mkdir(exist_ok=True)
     
     # Find the audio file (assume same name as cue but .wav)
@@ -181,13 +192,14 @@ def main():
         
         output_format = get_output_format()
         quality = get_quality()
+        output_dir_name = get_output_dir()
         
         tracks = parse_cue_file(cue_file)
         if not tracks:
             print("cue 파일에서 트랙을 찾을 수 없습니다.")
             continue
         
-        convert_tracks(cue_file, output_format, quality, tracks)
+        convert_tracks(cue_file, output_format, quality, tracks, output_dir_name)
         print("변환이 완료되었습니다. 다시 시작합니다...")
 
 if __name__ == "__main__":
